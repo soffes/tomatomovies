@@ -4,7 +4,7 @@ require 'sinatra'
 module TomatoMovies
   class Application < Sinatra::Application
     get '/' do
-      'hi'
+      redirect 'https://twitter.com/tomatomovies'
     end
   end
 end
