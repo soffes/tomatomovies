@@ -16,10 +16,19 @@ module TomatoMovies
       movies.each do |movie|
         release_date = Time.parse(movie['release_dates']['theater'])
 
-        if today?(release_date) && !tweeted?(movie)
-          if movie['ratings']['critics_rating'] == 'Certified Fresh'
-            tweet "#{movie['title']} 🍅 #{movie['ratings']['critics_score']}%\n\n#{movie['links']['alternate']}"
-          end
+        # Skip movies without an MPAA rating since it's probably something no one cares about
+        next if movie['mpaa_rating'] == 'Unrated'
+
+        # Skip the movie if it did't open today
+        next unless today?(release_date)
+
+        # Skip it if we've already tweeted it
+        next if tweeted?(movie)
+
+        # Only tweet good movies
+        rating = movie['ratings']['critics_rating']
+        if rating == 'Certified Fresh' || rating == 'Fresh'
+          tweet "#{movie['title']} 🍅 #{movie['ratings']['critics_score']}%\n\n#{movie['links']['alternate']}"
         end
       end
     end
