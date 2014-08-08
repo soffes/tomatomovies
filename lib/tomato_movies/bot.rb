@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'httparty'
 require 'redis'
+require 'twitter'
 require 'time'
 
 module TomatoMovies
