@@ -7,6 +7,8 @@ require 'time'
 module TomatoMovies
   class Bot
     ROTTEN_TOMATOES_API_KEY = ENV['ROTTEN_TOMATOES_API_KEY']
+    TWITTER_CONSUMER_KEY = ENV['TWITTER_CONSUMER_KEY']
+    TWITTER_CONSUMER_SECRET = ENV['TWITTER_CONSUMER_SECRET']
     TWITTER_ACCESS_TOKEN = ENV['TWITTER_ACCESS_TOKEN']
     TWITTER_ACCESS_TOKEN_SECRET = ENV['TWITTER_ACCESS_TOKEN_SECRET']
 
@@ -48,8 +50,10 @@ module TomatoMovies
     def tweet(text)
       if ENV['RACK_ENV'] == 'production'
         @@client ||= Twitter::REST::Client.new do |config|
-          config.consumer_key    = TWITTER_ACCESS_TOKEN
-          config.consumer_secret = TWITTER_ACCESS_TOKEN_SECRET
+          config.consumer_key = TWITTER_CONSUMER_KEY
+          config.consumer_secret = TWITTER_CONSUMER_SECRET
+          config.access_token = TWITTER_ACCESS_TOKEN
+          config.access_token_secret = TWITTER_ACCESS_TOKEN_SECRET
         end
 
         @@client.update(text)
