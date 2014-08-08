@@ -29,14 +29,19 @@ module TomatoMovies
         next if tweeted?(movie)
 
         # Only tweet good movies
-        rating = movie['ratings']['critics_rating']
-        if rating == 'Certified Fresh' || rating == 'Fresh'
-          tweet "#{movie['title']} 🍅 #{movie['ratings']['critics_score']}%\n\n#{movie['links']['alternate']}"
+        if good?(movie)
+          tweet! "#{movie['title']} 🍅 #{movie['ratings']['critics_score']}%\n\n#{movie['links']['alternate']}"
         end
       end
     end
 
     private
+
+    def good?(movie)
+      rating = movie['ratings']['critics_rating']
+      score = movie['ratings']['critics_score']
+      (rating == 'Certified Fresh' || rating == 'Fresh') && score >= 70
+    end
 
     def today?(time)
       today = Time.new
@@ -47,7 +52,7 @@ module TomatoMovies
       TomatoMovies.redis[movie['id'].to_s]
     end
 
-    def tweet(text)
+    def tweet!(text)
       if ENV['RACK_ENV'] == 'production'
         @@client ||= Twitter::REST::Client.new do |config|
           config.consumer_key = TWITTER_CONSUMER_KEY
@@ -55,7 +60,6 @@ module TomatoMovies
           config.access_token = TWITTER_ACCESS_TOKEN
           config.access_token_secret = TWITTER_ACCESS_TOKEN_SECRET
         end
-
         @@client.update(text)
       else
         puts text
