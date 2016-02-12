@@ -30,7 +30,9 @@ module TomatoMovies
 
         # Only tweet good movies
         if good?(movie)
-          tweet! "#{movie['title']} 🍅 #{movie['ratings']['critics_score']}%\n\n#{movie['links']['alternate']}"
+          url = movie['links']['alternate']
+          url = "https:#{url}" unless url.start_with("http:") || url.start_with("https:")
+          tweet! "#{movie['title']} 🍅 #{movie['ratings']['critics_score']}%\n\n#{url}"
         end
       end
     end
